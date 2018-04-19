@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">EstimateItApp</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string-array name="lobby_array">
+        <item>Game Lobby 1</item>
+        <item>Game Lobby 2</item>
+        <item>Game Lobby 3</item>
+        <item>Game Lobby 4</item>
+        <item>Game Lobby 5</item>
+    </string-array>
+    <string name="continueBtn">continue</string>
+    <string name="disconnect">DISCONNECT</string>
+    <string name="blue">BLUE</string>
+    <string name="black">BLACK</string>
+    <string name="green">GREEN</string>
+    <string name="red">RED</string>
+    <string name="text">Find an object that is cylindrical in shape and has a height of 8 inches</string>
+</resources>
