@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class Main3Activity extends AppCompatActivity {
     private EditText editText;
     private TextView textView;
@@ -27,6 +29,9 @@ public class Main3Activity extends AppCompatActivity {
     private Button Disconnect;
     private Button Clear;
     private int length;
+    private ArrayList list;
+
+    //private static final string[] colorArray;
 
     private LinearLayout targetArea;
 
@@ -41,6 +46,8 @@ public class Main3Activity extends AppCompatActivity {
         //textView.length();
         //String convert = String.valueOf(length);
         //Log.d("STATE", convert);
+
+        list = new ArrayList<String>();
 
         textView = this.findViewById(R.id.textView);
         textView.measure(0,0);
@@ -86,6 +93,14 @@ public class Main3Activity extends AppCompatActivity {
             }
         });
 
+        redbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                list.add("red");
+                //targetArea
+            }
+        });
+
         textView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -106,6 +121,14 @@ public class Main3Activity extends AppCompatActivity {
 
             }
         });
+
+       /* redbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity3.this, "Button Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
 
     }
 

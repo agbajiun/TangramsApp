@@ -1,17 +1,24 @@
 package me.jaxbot.estimateitapp;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import java.nio.channels.CompletionHandler;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import wlcp.gameserver.api.WLCPGameServer;
+
+public class MainActivity extends AppCompatActivity {
 
     private EditText Username;
     private EditText Password;
@@ -24,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Typeface myCustomFont=Typeface.createFromAsset(getAssets(), "fonts/simple.ttf");
+
 
         Username = findViewById(R.id.username);
         Password = findViewById(R.id.password);
@@ -46,12 +54,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void validate (String userName, String userPassword) {
-        if(userName.equals("admin") && userPassword.equals("1234")){
-            //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-            Log.d("STATE", "I am getting here!");
-            startActivity(intent);
+    @TargetApi(26)
+    private void validate (final String userName, final String userPassword) {
+        //if(userName.equals("admin") && userPassword.equals("1234")){
+        if(!userName.equals("") && !userPassword.equals("")) {
+            //Try connecting to server
+            WLCPGameServerSingleton.getInstance().connectToServer(new CompletionHandler<Void, AppCompatActivity>() {
+                @Override
+                public void completed(Void result, AppCompatActivity activity) {
+                    //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                    intent.putExtra("username", userName);
+                    Log.d("STATE", "I am getting here!");
+                    startActivity(intent);
+                }
+                @Override
+                public void failed(Throwable exc, AppCompatActivity activity) {
+                    //TODO implement error handling (server connection)
+                }
+            }, this);
+
         } else {
             counter--;
 
