@@ -13,6 +13,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -32,6 +34,8 @@ public class Main3Activity extends AppCompatActivity {
     private Button blackbtn;
     private Button Disconnect;
     private Button Clear;
+    private Button Submit;
+    private LinearLayout Sequence;
     private int length;
     private static final String TAG = "Logging Example";
     private ArrayList list;
@@ -49,6 +53,12 @@ public class Main3Activity extends AppCompatActivity {
     //private static final string[] colorArray;
 
     private LinearLayout targetArea;
+
+    private void showError() {
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        Sequence.startAnimation(shake);
+        Toast.makeText(Main3Activity.this, "That was the wrong sequence, try again", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +113,8 @@ public class Main3Activity extends AppCompatActivity {
 
         targetArea.setOnDragListener(dragListener);
 
+
+
         //redbtn.setOnLongClickListener(longClickListener);
         //bluebtn.setOnLongClickListener(longClickListener);
         //greenbtn.setOnLongClickListener(longClickListener);
@@ -136,6 +148,17 @@ public class Main3Activity extends AppCompatActivity {
                 bbtn4.setVisibility(View.GONE);
 
                 list.clear();
+            }
+        });
+
+        Submit = findViewById(R.id.submit);
+        Sequence = findViewById(R.id.sequence);
+        Submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!list.isEmpty()){
+                    showError();
+                }
             }
         });
 
