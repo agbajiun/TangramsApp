@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EstimateItApp</string>
+    <string name="app_name">TangramsRace</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string-array name="lobby_array">

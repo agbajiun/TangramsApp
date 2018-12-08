@@ -1,6 +1,8 @@
 package me.jaxbot.estimateitapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,6 +78,9 @@ class WLCPGameServerListenerImplActivity2 extends WLCPBaseGameServerListener imp
     public void gameLobbiesRecieved(IWLCPGameServer gameServer, GameLobbiesPacket packet) {
         for(GameLobbyInfo info : packet.getGameLobbyInfo()) {
             Log.d("Lobbies>>>>", info.gameLobbyName);
+            //Intent lobbies = new Intent(info.gameLobbyName);
+            //lobbies.putExtra("lobbyName", info.gameLobbyName);
+            //LocalBroadcastManager.getInstance(getContext()).sendBroadcast(lobbies);
             //lobbyFromServer = info.gameLobbyName;
         }
     }
