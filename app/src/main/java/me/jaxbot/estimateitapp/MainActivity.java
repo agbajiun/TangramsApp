@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void completed(Void result, AppCompatActivity activity) {
                     //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                    Intent intent = new Intent(MainActivity.this, Main3Activity.class);
                     intent.putExtra("username", userName);
                     Log.d("STATE", "I am getting here!");
                     startActivity(intent);
