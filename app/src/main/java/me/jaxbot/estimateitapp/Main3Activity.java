@@ -35,6 +35,7 @@ public class Main3Activity extends AppCompatActivity {
     private Button Disconnect;
     private Button Clear;
     private Button Submit;
+    private LinearLayout fourButtons;
     private LinearLayout Sequence;
     private int length;
     private static final String TAG = "Logging Example";
@@ -49,10 +50,13 @@ public class Main3Activity extends AppCompatActivity {
     private Button bbtn3;
     private Button bbtn4;
 
+    public String inputType;
+    private TextView textInput;
+
 
     //private static final string[] colorArray;
 
-    private LinearLayout targetArea;
+   // private LinearLayout targetArea;
 
     private void showError() {
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
@@ -60,11 +64,53 @@ public class Main3Activity extends AppCompatActivity {
         Toast.makeText(Main3Activity.this, "That was the wrong sequence, try again", Toast.LENGTH_SHORT).show();
     }
 
+    public void setColor(String btnColor, ArrayList list){
+        list.add(btnColor);
+        if(!btn1Colored){
+            bbtn1.setBackgroundColor(Color.parseColor(btnColor));
+            btn1Colored = true;
+            bbtn1.setVisibility(View.VISIBLE);
+        } else if (!btn2Colored){
+            bbtn2.setBackgroundColor(Color.parseColor(btnColor));
+            btn2Colored = true;
+            bbtn2.setVisibility(View.VISIBLE);
+        } else if (!btn3Colored){
+            bbtn3.setBackgroundColor(Color.parseColor(btnColor));
+            btn3Colored = true;
+            bbtn3.setVisibility(View.VISIBLE);
+        } else if (!btn4Colored){
+            bbtn4.setBackgroundColor(Color.parseColor(btnColor));
+            btn4Colored = true;
+            bbtn4.setVisibility(View.VISIBLE);
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 
+        inputType = "sequence";
+       // inputType = "singleButtonPress";
+       // inputType = "textInput";
+
+        textInput = findViewById(R.id.textInput);
+        fourButtons = findViewById(R.id.fourButtons);
+
+        //Check what kind of input this requires
+
+        if(inputType == "sequence" || inputType == "singleButtonPress"){
+            textInput.setVisibility(View.GONE);
+            fourButtons.setVisibility(View.VISIBLE);
+        }
+
+        if(inputType == "textInput") {
+            textInput.setVisibility(View.VISIBLE);
+            fourButtons.setVisibility(View.GONE);
+        }
+
+        //Setting the right type of font
         Typeface myCustomFont=Typeface.createFromAsset(getAssets(), "fonts/simple.ttf");
 
         //length = textView.length();
@@ -72,6 +118,7 @@ public class Main3Activity extends AppCompatActivity {
         //String convert = String.valueOf(length);
         //Log.d("STATE", convert);
 
+        // if the input type is a sequence of buttons
         list = new ArrayList<String>();
         btn1Colored = false;
         btn2Colored = false;
@@ -109,16 +156,6 @@ public class Main3Activity extends AppCompatActivity {
         greenbtn.setTypeface(myCustomFont);
         blackbtn.setTypeface(myCustomFont);
 
-        targetArea = this.findViewById(R.id.targetArea);
-
-        targetArea.setOnDragListener(dragListener);
-
-
-
-        //redbtn.setOnLongClickListener(longClickListener);
-        //bluebtn.setOnLongClickListener(longClickListener);
-        //greenbtn.setOnLongClickListener(longClickListener);
-        //blackbtn.setOnLongClickListener(longClickListener);
 
         Disconnect = findViewById(R.id.disconnect);
         Disconnect.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +193,7 @@ public class Main3Activity extends AppCompatActivity {
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!list.isEmpty()){
+                if (!list.isEmpty()){ // This is just for presentation purposes. In reality there will be a check to see if the sequence is accurate, not if it s
                     showError();
                 }
             }
@@ -165,98 +202,33 @@ public class Main3Activity extends AppCompatActivity {
         redbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            list.add("red");
-            if(!btn1Colored){
-                bbtn1.setBackgroundColor(Color.RED);
-                btn1Colored = true;
-                bbtn1.setVisibility(View.VISIBLE);
-            } else if (!btn2Colored){
-                bbtn2.setBackgroundColor(Color.RED);
-                btn2Colored = true;
-                bbtn2.setVisibility(View.VISIBLE);
-            } else if (!btn3Colored){
-                bbtn3.setBackgroundColor(Color.RED);
-                btn3Colored = true;
-                bbtn3.setVisibility(View.VISIBLE);
-            } else if (!btn4Colored){
-                bbtn4.setBackgroundColor(Color.RED);
-                btn4Colored = true;
-                bbtn4.setVisibility(View.VISIBLE);
-            }
+                setColor("red", list);
             }
         });
 
         bluebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                list.add("blue");
-                if(!btn1Colored){
-                    bbtn1.setBackgroundColor(Color.BLUE);
-                    btn1Colored = true;
-                    bbtn1.setVisibility(View.VISIBLE);
-                } else if (!btn2Colored){
-                    bbtn2.setBackgroundColor(Color.BLUE);
-                    btn2Colored = true;
-                    bbtn2.setVisibility(View.VISIBLE);
-                } else if (!btn3Colored){
-                    bbtn3.setBackgroundColor(Color.BLUE);
-                    btn3Colored = true;
-                    bbtn3.setVisibility(View.VISIBLE);
-                } else if (!btn4Colored){
-                    bbtn4.setBackgroundColor(Color.BLUE);
-                    btn4Colored = true;
-                    bbtn4.setVisibility(View.VISIBLE);
-                }
+                setColor("blue", list);
             }
         });
 
         greenbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                list.add("green");
-                if(!btn1Colored){
-                    bbtn1.setBackgroundColor(Color.GREEN);
-                    btn1Colored = true;
-                    bbtn1.setVisibility(View.VISIBLE);
-                } else if (!btn2Colored){
-                    bbtn2.setBackgroundColor(Color.GREEN);
-                    btn2Colored = true;
-                    bbtn2.setVisibility(View.VISIBLE);
-                } else if (!btn3Colored){
-                    bbtn3.setBackgroundColor(Color.GREEN);
-                    btn3Colored = true;
-                    bbtn3.setVisibility(View.VISIBLE);
-                } else if (!btn4Colored){
-                    bbtn4.setBackgroundColor(Color.GREEN);
-                    btn4Colored = true;
-                    bbtn4.setVisibility(View.VISIBLE);
-                }
+                setColor("green", list);
             }
         });
 
         blackbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                list.add("black");
-                if(!btn1Colored){
-                    bbtn1.setBackgroundColor(Color.BLACK);
-                    btn1Colored = true;
-                    bbtn1.setVisibility(View.VISIBLE);
-                } else if (!btn2Colored){
-                    bbtn2.setBackgroundColor(Color.BLACK);
-                    btn2Colored = true;
-                    bbtn2.setVisibility(View.VISIBLE);
-                } else if (!btn3Colored){
-                    bbtn3.setBackgroundColor(Color.BLACK);
-                    btn3Colored = true;
-                    bbtn3.setVisibility(View.VISIBLE);
-                } else if (!btn4Colored){
-                    bbtn4.setBackgroundColor(Color.BLACK);
-                    btn4Colored = true;
-                    bbtn4.setVisibility(View.VISIBLE);
-                }
+                setColor("black", list);
             }
         });
+
+
+
 
         textView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -279,67 +251,16 @@ public class Main3Activity extends AppCompatActivity {
             }
         });
 
-       /* redbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity3.this, "Button Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
 
     }
-
-    View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
-        @Override
-
-        public boolean onLongClick(View v) {
-            ClipData data = ClipData.newPlainText("","");
-            View.DragShadowBuilder myShadowBuilder = new View.DragShadowBuilder(v);
-            v.startDrag(data, myShadowBuilder, v, 0);
-
-            return true;
-        }
-
-    };
-
-    View.OnDragListener dragListener = new View.OnDragListener() {
-        @Override
-
-        public boolean onDrag(View v, DragEvent event) {
-            int dragEvent = event.getAction();
-            final View view = (View)event.getLocalState();
-
-            switch (dragEvent) {
-
-                case DragEvent.ACTION_DRAG_ENTERED:
-
-
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-
-                    break;
-                case DragEvent.ACTION_DROP:
-                        LinearLayout oldparent = (LinearLayout) view.getParent();
-                        oldparent.removeView(view);
-                        LinearLayout newParent = (LinearLayout)v;
-                        newParent.addView(view);
-
-                        Toast.makeText(Main3Activity.this, "Dropped", Toast.LENGTH_SHORT).show();
-
-                    break;
-            }
-            return true;
-        }
-
-    };
 
     private void disconnect () {
         //Log.d("STATE", gameLobby);
-        Intent intent = new Intent(Main3Activity.this, MainActivity.class);
+        Intent intent = new Intent(Main3Activity.this, LoginScreen.class);
         startActivity(intent);
     }
 
-    private void clear () {
+   /* private void clear () {
         targetArea.removeAllViews();
-    }
+    }*/
 }

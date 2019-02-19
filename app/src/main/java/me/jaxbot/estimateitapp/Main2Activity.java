@@ -20,36 +20,26 @@ import wlcp.shared.packets.GameLobbyInfo;
 
 public class Main2Activity extends AppCompatActivity {
 
-    private EditText Lobbyval;
-    private Button SelectLobby;
-    Spinner sp;
-    private String gameLobbySelected;
-    private String lobbyFromServer;
-
-    //private Spinner spinner = findViewById(R.id.spinner);
-   //  = spinner.getSelectedItem().toString();
-    //Making string array
-
-    //define array adapter of string type
-    ArrayAdapter <String> adapter;
+    private Button SelectGamePin;
+    private EditText gamePin;
+    private String gamePinString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        sp = findViewById(R.id.spinnerId);
-        gameLobbySelected = sp.getSelectedItem().toString();
 
-        //adminLobbyval = findViewById(R.id.lobby);
-       SelectLobby = findViewById(R.id.selectLobbyBtn);
-        SelectLobby.setOnClickListener(new View.OnClickListener() {
+        gamePin = findViewById(R.id.gamePin);
+        gamePinString = gamePin.toString();
+        SelectGamePin = findViewById(R.id.gamePinBtn);
+        SelectGamePin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectLobby(gameLobbySelected);
+                loginToGame();
             }
         });
-
-        getLobbiesFromServer((String)getIntent().getSerializableExtra("username"));
+       // username = (String)getIntent().getSerializableExtra("username");
+       // getLobbiesFromServer(username);
     }
 
     private void getLobbiesFromServer(final String username) {
@@ -64,9 +54,9 @@ public class Main2Activity extends AppCompatActivity {
         thread.start();
     }
 
-    private void selectLobby (String gameLobby) {
-        Log.d("STATE", gameLobby);
+    private void loginToGame () {
         Intent intent = new Intent(Main2Activity.this, Main3Activity.class);
+        //intent.putExtra("username", username);
         startActivity(intent);
     }
 }

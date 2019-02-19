@@ -18,7 +18,7 @@ import java.util.TimerTask;
 
 import wlcp.gameserver.api.WLCPGameServer;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginScreen extends AppCompatActivity {
 
     private EditText Username;
     private EditText Password;
@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void completed(Void result, AppCompatActivity activity) {
                     //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                    Intent intent = new Intent(MainActivity.this, Main3Activity.class);
+                    Intent intent = new Intent(LoginScreen.this, Main2Activity.class);
                     intent.putExtra("username", userName);
+                    //intent.putExtra("password", userPassword);
                     Log.d("STATE", "I am getting here!");
                     startActivity(intent);
                 }
