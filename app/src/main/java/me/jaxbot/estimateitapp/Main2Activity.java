@@ -2,6 +2,7 @@ package me.jaxbot.estimateitapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,66 +13,112 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import wlcp.gameserver.api.IWLCPGameServer;
-import wlcp.gameserver.api.WLCPBaseGameServerListener;
-import wlcp.gameserver.api.WLCPGameServerListener;
-import wlcp.shared.packets.GameLobbiesPacket;
-import wlcp.shared.packets.GameLobbyInfo;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import wlcp.gameserver.api.IWLCPGameClient;
+import wlcp.gameserver.api.WLCPGameClient;
+import wlcp.gameserver.api.exception.WLCPGameInstanceOrUsernameDoesNotExistException;
+import wlcp.gameserver.api.exception.WLCPGameServerCouldNotConnectException;
+import wlcp.shared.message.PlayerAvaliableMessage;
+
 
 public class Main2Activity extends AppCompatActivity {
 
     private Button SelectGamePin;
     private EditText gamePin;
+
     private String gamePinString;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        gamePin = findViewById(R.id.gamePin);
-        gamePinString = gamePin.toString();
+        //username = (String)getIntent().getSerializableExtra("username");
+        username = getIntent().getStringExtra("username");
+
         SelectGamePin = findViewById(R.id.gamePinBtn);
         SelectGamePin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginToGame();
+                gamePin = findViewById(R.id.gamePin);
+                gamePinString = gamePin.getText().toString();
+                int gamePinInt = Integer.parseInt(gamePinString);
+
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        IWLCPGameClient gameClient = new WLCPGameClient("130.215.45.83", 3333, gamePinInt, username);
+                        try {
+                            List<PlayerAvaliableMessage> players = gameClient.getPlayersAvailableFromGamePin();
+                            players.size();
+                            loginToGame(playerStrings(players));
+
+                            playerStrings(players);
+
+                            /*try {
+                                gameClient.connect(players.get(0).team, players.get(0).player, new WLCPGameServerSessionHandlerImpl(gameClient));
+
+                            } catch (WLCPGameServerCouldNotConnectException e) {
+                                e.printStackTrace();
+                            }*/ // this should be in the next screen where they select their players and teams
+
+                        } catch (WLCPGameInstanceOrUsernameDoesNotExistException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                thread.start();
+
             }
         });
-       // username = (String)getIntent().getSerializableExtra("username");
+
        // getLobbiesFromServer(username);
     }
 
-    private void getLobbiesFromServer(final String username) {
-        Thread thread = new Thread(new Runnable() {
-           @Override
-            public void run() {
-               Bundle b = new Bundle();
-               WLCPGameServerSingleton.getInstance().getGameServer().registerEventListener(new WLCPGameServerListenerImplActivity2());
-               WLCPGameServerSingleton.getInstance().getGameServer().getGameLobbiesForUsername(username);
-           }
-        });
-        thread.start();
-    }
 
-    private void loginToGame () {
-        Intent intent = new Intent(Main2Activity.this, Main3Activity.class);
-        //intent.putExtra("username", username);
+    private void loginToGame (ArrayList<TeamPlayer> players) {
+        Intent intent = new Intent(Main2Activity.this, SelectPlayerActivity.class);
+        //intent.putStringArrayListExtra("playerlist", players);
+
+        //intent.putExtras(bundle); //figure out how to pass array of team player
         startActivity(intent);
     }
-}
 
+    /*private ArrayList<String> playerStrings (List<PlayerAvaliableMessage> players){
+        ArrayList<String> teamPlayerStrings = new ArrayList<String>();
+        for (int x = 0; x < players.size(); x++){
 
-class WLCPGameServerListenerImplActivity2 extends WLCPBaseGameServerListener implements WLCPGameServerListener {
+            int p = players.get(x).player;
+            int t = players.get(x).team;
 
-    @Override
-    public void gameLobbiesRecieved(IWLCPGameServer gameServer, GameLobbiesPacket packet) {
-        for(GameLobbyInfo info : packet.getGameLobbyInfo()) {
-            Log.d("Lobbies>>>>", info.gameLobbyName);
-            //Intent lobbies = new Intent(info.gameLobbyName);
-            //lobbies.putExtra("lobbyName", info.gameLobbyName);
-            //LocalBroadcastManager.getInstance(getContext()).sendBroadcast(lobbies);
-            //lobbyFromServer = info.gameLobbyName;
+            String teamplayerStr = new TeamPlayer(p,t).toString();
+            teamPlayerStrings.add(teamplayerStr);
         }
+
+
+        return teamPlayerStrings;
+    }*/
+
+    private ArrayList<TeamPlayer> playerStrings (List<PlayerAvaliableMessage> players){
+        ArrayList<TeamPlayer> teamPlayerStrings = new ArrayList<TeamPlayer>();
+        for (int x = 0; x < players.size(); x++){
+
+            int p = players.get(x).player;
+            int t = players.get(x).team;
+
+            TeamPlayer teamplayerStr = new TeamPlayer(p,t);
+            teamPlayerStrings.add(teamplayerStr);
+        }
+
+
+        return teamPlayerStrings;
     }
 }
+
+

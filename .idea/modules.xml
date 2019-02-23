@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EstimateIt.iml" filepath="$PROJECT_DIR$/EstimateIt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WLCPGameServerAndroidAPI-debug/WLCPGameServerAndroidAPI-debug.iml" filepath="$PROJECT_DIR$/WLCPGameServerAndroidAPI-debug/WLCPGameServerAndroidAPI-debug.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

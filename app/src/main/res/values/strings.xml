@@ -16,4 +16,5 @@
     <string name="green">GREEN</string>
     <string name="red">RED</string>
     <string name="text">I have four equal sides and four right angles. Choose the black button and submit for a hint.</string>
+    <string name="title_activity_select_player">SelectPlayer</string>
 </resources>

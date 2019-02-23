@@ -24,7 +24,12 @@
         <activity android:name=".SplashScreenActivity" />
         <activity android:name=".SecondActivity" />
         <activity android:name=".Main3Activity" />
-        <activity android:name=".Main4Activity"></activity>
+        <activity android:name=".Main4Activity" />
+        <activity
+            android:name=".SelectPlayer"
+            android:label="@string/title_activity_select_player"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SelectPlayerActivity"></activity>
     </application>
 
 </manifest>
