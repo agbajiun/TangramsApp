@@ -16,7 +16,6 @@ import java.nio.channels.CompletionHandler;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import wlcp.gameserver.api.WLCPGameServer;
 
 public class LoginScreen extends AppCompatActivity {
 
@@ -58,22 +57,12 @@ public class LoginScreen extends AppCompatActivity {
     private void validate (final String userName, final String userPassword) {
         //if(userName.equals("admin") && userPassword.equals("1234")){
         if(!userName.equals("") && !userPassword.equals("")) {
-            //Try connecting to server
-            WLCPGameServerSingleton.getInstance().connectToServer(new CompletionHandler<Void, AppCompatActivity>() {
-                @Override
-                public void completed(Void result, AppCompatActivity activity) {
-                    //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                    Intent intent = new Intent(LoginScreen.this, Main2Activity.class);
-                    intent.putExtra("username", userName);
-                    //intent.putExtra("password", userPassword);
-                    Log.d("STATE", "I am getting here!");
-                    startActivity(intent);
-                }
-                @Override
-                public void failed(Throwable exc, AppCompatActivity activity) {
-                    //TODO implement error handling (server connection)
-                }
-            }, this);
+
+            Intent intent = new Intent(LoginScreen.this, Main2Activity.class);
+            intent.putExtra("username", userName);
+            //intent.putExtra("password", userPassword);
+            Log.d("STATE", "I am getting here!");
+            startActivity(intent);
 
         } else {
             counter--;
