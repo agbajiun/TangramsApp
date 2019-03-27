@@ -1,5 +1,7 @@
 package me.jaxbot.estimateitapp;
 
+import android.app.Activity;
+
 import wlcp.gameserver.api.WLCPGameClientSessionHandler;
 
 import wlcp.gameserver.api.IWLCPGameClient;
@@ -11,8 +13,8 @@ import wlcp.shared.message.*;
 
 public class WLCPGameServerSessionHandlerImpl extends WLCPGameClientSessionHandler {
 
-    public WLCPGameServerSessionHandlerImpl(IWLCPGameClient gameClient) {
-        super(gameClient);
+    public WLCPGameServerSessionHandlerImpl(IWLCPGameClient gameClient, Object activity) {
+        super(gameClient, activity);
     }
 
     @Override
@@ -35,21 +37,28 @@ public class WLCPGameServerSessionHandlerImpl extends WLCPGameClientSessionHandl
 
     @Override
     public void displayTextRequest(DisplayTextMessage msg) {
-        System.out.println(msg.displayText);
+
+        System.out.println("this is the display text, I need to send back " + msg.displayText);
+        ((Main3Activity) activity).getDisplayText(msg.displayText);
     }
 
     @Override
     public void singleButtonPressRequest() {
+
         System.out.print("Please Enter a button 1-4: ");
+        ((Main3Activity) activity).setSingleBtnDisplay();
     }
 
     @Override
     public void sequenceButtonPressRequest() {
         System.out.print("Please Enter a sequence using the numbers 1-4: ");
+        ((Main3Activity) activity).setBtnSequenceDisplay();
     }
 
     @Override
     public void keyboardInputRequest() {
         System.out.print("Please Enter some keyboard input: ");
+        ((Main3Activity) activity).setTextInputDisplay();
     }
+
 }

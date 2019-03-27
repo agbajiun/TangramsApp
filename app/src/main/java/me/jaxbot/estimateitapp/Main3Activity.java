@@ -24,19 +24,30 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import wlcp.gameserver.api.IWLCPGameClient;
+import wlcp.gameserver.api.WLCPGameClient;
+import wlcp.gameserver.api.exception.WLCPGameServerCouldNotConnectException;
+
 public class Main3Activity extends AppCompatActivity {
     private EditText editText;
-    private TextView textView;
+    private TextView displayTextView; //this is the display section
     private float sizeFont = 0;
     private Button redbtn;
     private Button bluebtn;
     private Button greenbtn;
     private Button blackbtn;
+
+    private Button singleOneBtn;
+    private Button singleTwoBtn;
+    private Button singleThreeBtn;
+    private Button singleFourBtn;
+
     private Button Disconnect;
     private Button Clear;
     private Button Submit;
     private LinearLayout fourButtons;
     private LinearLayout Sequence;
+    private LinearLayout singleButton;
     private int length;
     private static final String TAG = "Logging Example";
     private ArrayList list;
@@ -52,6 +63,12 @@ public class Main3Activity extends AppCompatActivity {
 
     public String inputType;
     private TextView textInput;
+
+    private TextView displayText;
+    private int selectedTeam;
+    private int selectedPlayer;
+    private String username;
+    private String gamePin;
 
 
     //private static final string[] colorArray;
@@ -91,32 +108,45 @@ public class Main3Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 
-        inputType = "sequence";
-       // inputType = "singleButtonPress";
+        String sPlayer = getIntent().getStringExtra("team");
+        String sTeam = getIntent().getStringExtra("player");
+        selectedTeam = 1; //Integer.valueOf(sTeam);
+        selectedPlayer = 1; //Integer.valueOf(sPlayer);
+        username = getIntent().getStringExtra("username");
+        gamePin = getIntent().getStringExtra("gamePin");
+        int gamePinInt = Integer.valueOf(gamePin);
+
+        displayTextView = this.findViewById(R.id.displayText);
+        IWLCPGameClient gameClient = new WLCPGameClient("130.215.45.83", 3333, gamePinInt, username);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                IWLCPGameClient gameClient = new WLCPGameClient("130.215.45.83", 3333, gamePinInt, username);
+                try {
+                    gameClient.connect(selectedTeam, selectedPlayer, new WLCPGameServerSessionHandlerImpl(gameClient, Main3Activity.this));
+
+
+                } catch (WLCPGameServerCouldNotConnectException e) {
+                    e.printStackTrace();
+                } // this should be in the next screen where they select their players and teams
+            }
+        });
+        thread.start();
+
+
+        // inputType = "sequence";
+        //inputType = "singleButtonPress";
        // inputType = "textInput";
 
         textInput = findViewById(R.id.textInput);
         fourButtons = findViewById(R.id.fourButtons);
+        singleButton = findViewById(R.id.singleButton);
 
-        //Check what kind of input this requires
-
-        if(inputType == "sequence" || inputType == "singleButtonPress"){
-            textInput.setVisibility(View.GONE);
-            fourButtons.setVisibility(View.VISIBLE);
-        }
-
-        if(inputType == "textInput") {
-            textInput.setVisibility(View.VISIBLE);
-            fourButtons.setVisibility(View.GONE);
-        }
 
         //Setting the right type of font
         Typeface myCustomFont=Typeface.createFromAsset(getAssets(), "fonts/simple.ttf");
 
-        //length = textView.length();
-        //textView.length();
-        //String convert = String.valueOf(length);
-        //Log.d("STATE", convert);
 
         // if the input type is a sequence of buttons
         list = new ArrayList<String>();
@@ -135,13 +165,6 @@ public class Main3Activity extends AppCompatActivity {
         bbtn3.setVisibility(View.GONE);
         bbtn4.setVisibility(View.GONE);
 
-        textView = this.findViewById(R.id.textView);
-        textView.measure(0,0);
-        textView.getMeasuredHeight();
-        length = textView.getMeasuredWidth();
-        //textView.getText()
-        textView.setTextSize(30);
-        //textView.length();
 
          redbtn = this.findViewById(R.id.redbtn);
          bluebtn = this.findViewById(R.id.bluebtn);
@@ -150,7 +173,7 @@ public class Main3Activity extends AppCompatActivity {
 
 
 
-        textView.setTypeface(myCustomFont);
+        displayTextView.setTypeface(myCustomFont);
         redbtn.setTypeface(myCustomFont);
         bluebtn.setTypeface(myCustomFont);
         greenbtn.setTypeface(myCustomFont);
@@ -216,7 +239,7 @@ public class Main3Activity extends AppCompatActivity {
         greenbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setColor("green", list);
+                setColor("#009900", list); //Green color
             }
         });
 
@@ -227,30 +250,25 @@ public class Main3Activity extends AppCompatActivity {
             }
         });
 
+        singleOneBtn = findViewById(R.id.single1);
 
-
-
-        textView.addTextChangedListener(new TextWatcher() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void run() {
+                singleOneBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            gameClient.sendSingleButtonPress(1);
 
-            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                textView.setText(charSequence);
-
-                textView.setTextSize(60);
-                //textView.setTextSize(sizeFont+30);
-                //textView.get;
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+                });
             }
         });
-
 
     }
 
@@ -260,7 +278,80 @@ public class Main3Activity extends AppCompatActivity {
         startActivity(intent);
     }
 
-   /* private void clear () {
-        targetArea.removeAllViews();
-    }*/
+   public void setInputVisibility(String inputType) {
+        if(inputType.equals("sequence")){
+            textInput.setVisibility(View.GONE);
+            singleButton.setVisibility(View.GONE);
+            fourButtons.setVisibility(View.VISIBLE);
+        }
+
+        if(inputType.equals("singleButtonPress")){
+            //Log.d("hey", "hey");
+            textInput.setVisibility(View.GONE);
+            singleButton.setVisibility(View.VISIBLE);
+            fourButtons.setVisibility(View.GONE);
+        }
+
+        if(inputType.equals("textInput")) {
+            textInput.setVisibility(View.VISIBLE);
+            singleButton.setVisibility(View.GONE);
+            fourButtons.setVisibility(View.GONE);
+
+        }
+    }
+
+
+    public void refreshText(int stringLength){
+        if(stringLength > 180){
+            displayTextView.setTextSize(25);
+        }
+        if(stringLength >= 150 && stringLength <= 180){
+            displayTextView.setTextSize(30);
+        }
+        if(stringLength >= 120 && stringLength < 150){
+            displayTextView.setTextSize(35);
+        }
+        if(stringLength < 120){
+            displayTextView.setTextSize(40);
+        }
+    }
+
+    public void getDisplayText(String text) {
+        int stringLength = text.length();
+        displayTextView.setText(text);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                refreshText(stringLength);
+            }
+        });
+    }
+
+    public void setSingleBtnDisplay() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setInputVisibility("singleButtonPress");
+            }
+        });
+    }
+
+    public void setBtnSequenceDisplay() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setInputVisibility("sequence");
+            }
+        });
+    }
+
+    public void setTextInputDisplay() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setInputVisibility("textInput");
+            }
+        });
+
+    }
+
 }

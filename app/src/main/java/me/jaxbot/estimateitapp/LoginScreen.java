@@ -47,7 +47,7 @@ public class LoginScreen extends AppCompatActivity {
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validate(Username.getText().toString(), Password.getText().toString());
+                validate(Username.getText().toString().toLowerCase(), Password.getText().toString());
 
             }
         });
@@ -55,9 +55,9 @@ public class LoginScreen extends AppCompatActivity {
 
     @TargetApi(26)
     private void validate (final String userName, final String userPassword) {
-        //if(userName.equals("admin") && userPassword.equals("1234")){
-        if(!userName.equals("") && !userPassword.equals("")) {
-
+        if(!userName.equals("")){
+        //if(!userName.equals("") && !userPassword.equals("")) {
+            userPassword.equals("1234");
             Intent intent = new Intent(LoginScreen.this, Main2Activity.class);
             intent.putExtra("username", userName);
             //intent.putExtra("password", userPassword);
