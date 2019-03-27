@@ -55,7 +55,7 @@ public class Main2Activity extends AppCompatActivity {
                         try {
                             List<PlayerAvaliableMessage> players = gameClient.getPlayersAvailableFromGamePin();
                             players.size();
-                            loginToGame(playerStrings(players));
+                            loginToGame(playerStrings(players), gamePinString, username);
 
                             playerStrings(players);
 
@@ -78,32 +78,22 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
-       // getLobbiesFromServer(username);
     }
 
 
-    private void loginToGame (ArrayList<TeamPlayer> players) {
+    private void loginToGame (ArrayList<TeamPlayer> players, String gamePin, String username) {
         Intent intent = new Intent(Main2Activity.this, SelectPlayerActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("playerlist", players);
+        intent.putExtras(bundle);
+        intent.putExtra("gamePin", gamePin);
+        intent.putExtra("user", username);
         //intent.putStringArrayListExtra("playerlist", players);
 
         //intent.putExtras(bundle); //figure out how to pass array of team player
         startActivity(intent);
     }
 
-    /*private ArrayList<String> playerStrings (List<PlayerAvaliableMessage> players){
-        ArrayList<String> teamPlayerStrings = new ArrayList<String>();
-        for (int x = 0; x < players.size(); x++){
-
-            int p = players.get(x).player;
-            int t = players.get(x).team;
-
-            String teamplayerStr = new TeamPlayer(p,t).toString();
-            teamPlayerStrings.add(teamplayerStr);
-        }
-
-
-        return teamPlayerStrings;
-    }*/
 
     private ArrayList<TeamPlayer> playerStrings (List<PlayerAvaliableMessage> players){
         ArrayList<TeamPlayer> teamPlayerStrings = new ArrayList<TeamPlayer>();
