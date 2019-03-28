@@ -24,8 +24,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
     private Button Join;
     //private ArrayList<String> availablePlayers;
     private ArrayList<TeamPlayer> availablePlayers;
-    private int player;
-    private int team;
+    private String player;
+    private String team;
     private String username;
     private String gamePin;
     private String displayText;
@@ -86,7 +86,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     }
 
 
-    private void selectPlayer (int selectedPlayer, int selectedTeam, int gamePinInt, String username) {
+    private void selectPlayer (String selectedPlayer, String selectedTeam, int gamePinInt, String username) {
         Intent intent = new Intent(SelectPlayerActivity.this, Main3Activity.class);
         intent.putExtra("player", selectedPlayer);
         intent.putExtra("team", selectedTeam);
@@ -98,8 +98,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
 
     public void getTeamPlayer(String teamPlayerString){
         String[] teamPlayer = teamPlayerString.split(" ");
-        team = new Integer(teamPlayer[0]);
-        player = new Integer(teamPlayer[1]);
+        team = teamPlayer[0];
+        player = teamPlayer[1];
 
     }
 

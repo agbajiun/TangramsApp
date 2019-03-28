@@ -65,10 +65,11 @@ public class Main3Activity extends AppCompatActivity {
     private TextView textInput;
 
     private TextView displayText;
-    private int selectedTeam;
-    private int selectedPlayer;
     private String username;
     private String gamePin;
+    //private StringBuilder colorSequence;
+
+    private IWLCPGameClient gameClient;
 
 
     //private static final string[] colorArray;
@@ -81,8 +82,10 @@ public class Main3Activity extends AppCompatActivity {
         Toast.makeText(Main3Activity.this, "That was the wrong sequence, try again", Toast.LENGTH_SHORT).show();
     }
 
-    public void setColor(String btnColor, ArrayList list){
+    StringBuilder colorSequence = new StringBuilder();
+    public void setColor(String btnColor, ArrayList list, String colorCode){
         list.add(btnColor);
+        colorSequence.append(colorCode);
         if(!btn1Colored){
             bbtn1.setBackgroundColor(Color.parseColor(btnColor));
             btn1Colored = true;
@@ -110,19 +113,21 @@ public class Main3Activity extends AppCompatActivity {
 
         String sPlayer = getIntent().getStringExtra("team");
         String sTeam = getIntent().getStringExtra("player");
-        selectedTeam = 1; //Integer.valueOf(sTeam);
-        selectedPlayer = 1; //Integer.valueOf(sPlayer);
+
+        int selectedTeam = Integer.valueOf(sTeam) - 1;
+        int selectedPlayer = Integer.valueOf(sPlayer) - 1;
+
+
         username = getIntent().getStringExtra("username");
         gamePin = getIntent().getStringExtra("gamePin");
         int gamePinInt = Integer.valueOf(gamePin);
 
         displayTextView = this.findViewById(R.id.displayText);
-        IWLCPGameClient gameClient = new WLCPGameClient("130.215.45.83", 3333, gamePinInt, username);
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                IWLCPGameClient gameClient = new WLCPGameClient("130.215.45.83", 3333, gamePinInt, username);
+                gameClient = new WLCPGameClient("130.215.45.83", 3333, gamePinInt, username);
                 try {
                     gameClient.connect(selectedTeam, selectedPlayer, new WLCPGameServerSessionHandlerImpl(gameClient, Main3Activity.this));
 
@@ -135,9 +140,6 @@ public class Main3Activity extends AppCompatActivity {
         thread.start();
 
 
-        // inputType = "sequence";
-        //inputType = "singleButtonPress";
-       // inputType = "textInput";
 
         textInput = findViewById(R.id.textInput);
         fourButtons = findViewById(R.id.fourButtons);
@@ -155,10 +157,10 @@ public class Main3Activity extends AppCompatActivity {
         btn3Colored = false;
         btn4Colored = false;
 
-        bbtn1 = findViewById(R.id.button2);
-        bbtn2 = findViewById(R.id.button3);
-        bbtn3 = findViewById(R.id.button4);
-        bbtn4 = findViewById(R.id.button5);
+        bbtn1 = findViewById(R.id.sequence1);
+        bbtn2 = findViewById(R.id.sequence2);
+        bbtn3 = findViewById(R.id.sequence3);
+        bbtn4 = findViewById(R.id.sequence4);
 
         bbtn1.setVisibility(View.GONE);
         bbtn2.setVisibility(View.GONE);
@@ -184,7 +186,15 @@ public class Main3Activity extends AppCompatActivity {
         Disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                disconnect();
+                try {
+                    gameClient.disconnectFromGameInstance();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //disconnect();
+                Intent intent = new Intent(Main3Activity.this, LoginScreen.class);
+                startActivity(intent);
             }
         });
 
@@ -192,22 +202,8 @@ public class Main3Activity extends AppCompatActivity {
         Clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn1Colored = false;
-                btn2Colored = false;
-                btn3Colored = false;
-                btn4Colored = false;
+                clearSequence();
 
-                bbtn1.setBackgroundColor(Color.LTGRAY);
-                bbtn2.setBackgroundColor(Color.LTGRAY);
-                bbtn3.setBackgroundColor(Color.LTGRAY);
-                bbtn4.setBackgroundColor(Color.LTGRAY);
-
-                bbtn1.setVisibility(View.GONE);
-                bbtn2.setVisibility(View.GONE);
-                bbtn3.setVisibility(View.GONE);
-                bbtn4.setVisibility(View.GONE);
-
-                list.clear();
             }
         });
 
@@ -216,41 +212,54 @@ public class Main3Activity extends AppCompatActivity {
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!list.isEmpty()){ // This is just for presentation purposes. In reality there will be a check to see if the sequence is accurate, not if it s
+                if (colorSequence.length() == 0){// This is just for presentation purposes. In reality there will be a check to see if the sequence is accurate, not if it s
                     showError();
                 }
+                try {
+                    gameClient.sendSequenceButtonPress(colorSequence.toString());
+                    clearSequence();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showError();
+                }
+
             }
         });
 
         redbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setColor("red", list);
+                setColor("red", list, "1");
             }
         });
 
         bluebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setColor("blue", list);
+                setColor("blue", list, "3");
             }
         });
 
         greenbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setColor("#009900", list); //Green color
+                setColor("#009900", list, "2"); //Green color
             }
         });
 
         blackbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setColor("black", list);
+                setColor("black", list, "4");
             }
         });
 
-        singleOneBtn = findViewById(R.id.single1);
+        singleOneBtn = findViewById(R.id.single1); // Red
+        singleTwoBtn = findViewById(R.id.single2); //Green
+        singleThreeBtn = findViewById(R.id.single3); //Blue
+        singleFourBtn = findViewById(R.id.single4); //Black
 
         runOnUiThread(new Runnable() {
             @Override
@@ -267,16 +276,56 @@ public class Main3Activity extends AppCompatActivity {
                     }
 
                 });
+
+                singleTwoBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            gameClient.sendSingleButtonPress(2);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                });
+
+                singleThreeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            gameClient.sendSingleButtonPress(3);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                });
+
+                singleFourBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            gameClient.sendSingleButtonPress(4);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                });
             }
         });
 
     }
 
-    private void disconnect () {
-        //Log.d("STATE", gameLobby);
-        Intent intent = new Intent(Main3Activity.this, LoginScreen.class);
-        startActivity(intent);
-    }
+//    private void disconnect () {
+//        //Log.d("STATE", gameLobby);
+//        Intent intent = new Intent(Main3Activity.this, LoginScreen.class);
+//        startActivity(intent);
+//
+//    }
 
    public void setInputVisibility(String inputType) {
         if(inputType.equals("sequence")){
@@ -286,7 +335,6 @@ public class Main3Activity extends AppCompatActivity {
         }
 
         if(inputType.equals("singleButtonPress")){
-            //Log.d("hey", "hey");
             textInput.setVisibility(View.GONE);
             singleButton.setVisibility(View.VISIBLE);
             fourButtons.setVisibility(View.GONE);
@@ -352,6 +400,26 @@ public class Main3Activity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void clearSequence() {
+        btn1Colored = false;
+        btn2Colored = false;
+        btn3Colored = false;
+        btn4Colored = false;
+
+        bbtn1.setBackgroundColor(Color.LTGRAY);
+        bbtn2.setBackgroundColor(Color.LTGRAY);
+        bbtn3.setBackgroundColor(Color.LTGRAY);
+        bbtn4.setBackgroundColor(Color.LTGRAY);
+
+        bbtn1.setVisibility(View.GONE);
+        bbtn2.setVisibility(View.GONE);
+        bbtn3.setVisibility(View.GONE);
+        bbtn4.setVisibility(View.GONE);
+
+        list.clear();
+        colorSequence.setLength(0);
     }
 
 }
