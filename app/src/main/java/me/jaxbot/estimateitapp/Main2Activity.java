@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class Main2Activity extends AppCompatActivity {
 
                         } catch (WLCPGameInstanceOrUsernameDoesNotExistException e) {
                             e.printStackTrace();
+                            gamePinError();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -108,6 +110,18 @@ public class Main2Activity extends AppCompatActivity {
 
 
         return teamPlayerStrings;
+    }
+
+    private void gamePinError(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText
+                        (getApplicationContext(), "The Game Pin Or Username entered does not exist!", Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+
     }
 }
 
